@@ -1,3 +1,6 @@
+.web
+.states
+assets/external/
 # Python
 __pycache__/
 *.py[cod]
@@ -31,6 +34,7 @@ Desktop/
 
 # Reflex / React
 .web/
+!.web/_static/
 assets/
 public/
 .states/
