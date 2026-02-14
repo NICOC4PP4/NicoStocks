@@ -19,7 +19,11 @@ dm = DataManager()
 
 def send_telegram(message):
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
-    requests.post(url, json={"chat_id": TELEGRAM_CHAT_ID, "text": message})
+    try:
+        resp = requests.post(url, json={"chat_id": TELEGRAM_CHAT_ID, "text": message})
+        print(f"Telegram Response ({resp.status_code}): {resp.text}")
+    except Exception as e:
+        print(f"Telegram Error: {e}")
 
 def run_sync():
     print("Starting Daily Sync...")
