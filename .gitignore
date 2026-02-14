@@ -29,13 +29,29 @@ ENV/
 env/
 Desktop/
 
-# Reflex
+# Reflex / React
 .web/
 assets/
+public/
+.states/
+.cache/
 
-# Environment Variables
+# Environment Variables & Secrets
 .env
 .env.local
+.env.*.local
+
+# Database
+*.db
+*.sqlite3
+*.sqlite
+
+# Testing & Quality
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+coverage.xml
 
 # IDEs
 .vscode/
@@ -48,3 +64,4 @@ docker-compose.override.yml
 *.log
 error_log.txt
 full_logs.txt
+python.log

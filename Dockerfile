@@ -7,33 +7,31 @@ ENV PYTHONDONTWRITEBYTECODE=1
 
 # Instalar dependencias del sistema necesarias para Reflex y Node.js
 # Reflex necesita Node.js para el frontend y unzip/curl para setup
+# Instalar Nginx además de las dependencias anteriores
 RUN apt-get update && apt-get install -y \
     curl \
     unzip \
     git \
     nodejs \
     npm \
+    nginx \
     && rm -rf /var/lib/apt/lists/*
 
-# Establecer directorio de trabajo
 WORKDIR /app
 
-# Copiar requirements primero para aprovechar caché de Docker
+# Copiar requirements
 COPY scripts/requirements.txt .
-
-# Instalar dependencias de Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar el resto del código
+# Copiar código y configuraciones
 COPY . .
+COPY nginx.conf /etc/nginx/nginx.conf
 
-# Inicializar Reflex (Opcional si ya existe estructura, comentado para evitar fallo)
-# RUN reflex init
+# Permisos de ejecución
+RUN chmod +x scripts/entrypoint.sh
 
+# Exponer el puerto variable (documentación solamente, Railway lo ignora e inyecta $PORT)
+EXPOSE 8080
 
-# Exponer puertos: 3000 (Frontend), 8000 (Backend)
-EXPOSE 3000
-EXPOSE 8000
-
-# Comando por defecto para desarrollo
-CMD ["reflex", "run", "--env", "dev", "--backend-host", "0.0.0.0"]
+# Usar el script orquestador
+CMD ["./scripts/entrypoint.sh"]
