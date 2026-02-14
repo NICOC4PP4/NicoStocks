@@ -6,9 +6,15 @@ from utils.finance_core import calculate_twr
 import pandas as pd
 
 # Supabase Init
+# Supabase Init
 url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_KEY")
-supabase: Client = create_client(url, key)
+
+if not url or not key:
+    print("Warning: SUPABASE_URL or SUPABASE_KEY missing. Client not initialized.")
+    supabase = None
+else:
+    supabase: Client = create_client(url, key)
 
 class State(rx.State):
     """Estado global de la aplicación."""
