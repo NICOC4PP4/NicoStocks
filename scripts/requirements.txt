@@ -1,0 +1,9 @@
+reflex>=0.4.0
+pandas
+numpy
+requests
+yfinance
+supabase
+google-generativeai
+plotly
+python-dotenv

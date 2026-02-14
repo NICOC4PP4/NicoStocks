@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: smartfolio_app
+    volumes:
+      - .:/app # Hot-reloading: mapea directorio local al contenedor
+      - /app/.web # Evitar sobreescribir la compilación del frontend dentro del contenedor
+      - /app/__pycache__
+    ports:
+      - "3000:3000" # Frontend
+      - "8000:8000" # Backend
+    env_file:
+      - .env
+    environment:
+      - POETRY_VIRTUALENVS_CREATE=false
+    # Comando explícito para asegurar que escuche en todas las interfaces
+    command: reflex run --env dev --backend-host 0.0.0.0 --frontend-port 3000
+    restart: unless-stopped
