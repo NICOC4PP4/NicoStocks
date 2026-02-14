@@ -5,10 +5,18 @@ set -e
 echo "Configuring Nginx to listen on port $PORT..."
 sed -i "s/PORT_PLACEHOLDER/$PORT/g" /etc/nginx/nginx.conf
 
-# 2. Exportar Frontend Estático (Build Time)
-# Esto genera los archivos HTML/JS en .web/_static
-echo "Building Frontend..."
-reflex export --frontend-only --no-zip
+# 2. Inyectar API_URL en Runtime
+# Reemplazamos el placeholder del build por la variable de entorno real de Railway
+if [ -z "$API_URL" ]; then
+  echo "WARNING: API_URL not set, defaulting to localhost:8000"
+  REAL_API_URL="http://localhost:8000"
+else
+  echo "Injecting API_URL: $API_URL"
+  REAL_API_URL="$API_URL"
+fi
+
+echo "Replacing placeholder in static files..."
+find .web/_static -type f -name "*.js" -exec sed -i "s|http://API_URL_PLACEHOLDER|$REAL_API_URL|g" {} +
 
 # 3. Iniciar Backend en segundo plano
 echo "Starting Reflex Backend..."

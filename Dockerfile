@@ -27,6 +27,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 COPY nginx.conf /etc/nginx/nginx.conf
 
+# Build Time: Exportar frontend estático
+# Usamos un placeholder para la API_URL que sustituiremos en runtime
+ENV API_URL="http://API_URL_PLACEHOLDER"
+RUN reflex export --frontend-only --no-zip
+
 # Permisos de ejecución
 RUN chmod +x scripts/entrypoint.sh
 
