@@ -23,6 +23,9 @@ class DataManager:
                 if not data: return None
                 return data
             except requests.RequestException as e:
+                if response.status_code == 403:
+                    print(f"FMP Permission Error (Free Tier?): {endpoint}. Skipping.")
+                    return None
                 print(f"Error fetching {endpoint}: {e}. Retrying ({attempt+1}/3)...")
                 time.sleep(2 ** attempt)
         return None

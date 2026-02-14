@@ -56,8 +56,11 @@ def run_sync():
 
     # Send Notification
     if report_lines:
-        msg = "SmartFolio Daily Alert:\n" + "\n".join(report_lines)
-        send_telegram(msg)
+        msg = "🚀 *SmartFolio Daily Alert:*\n\n" + "\n".join(report_lines)
+    else:
+        msg = f"✅ *SmartFolio Sync Complete*\nUpdated {len(assets)} assets.\nNo high impact news detected."
+    
+    send_telegram(msg)
     
     print("Sync Complete.")
 
