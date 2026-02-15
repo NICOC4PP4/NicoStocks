@@ -1,0 +1,30 @@
+# Excluir temporales de .web EXCEPTO el build compilado
+.web/node_modules/
+.web/app/
+.web/backend/
+.web/components/
+.web/styles/
+.web/utils/
+.web/public/
+.web/*.toml
+.web/*.lock
+.web/*.json
+.web/*.js
+.web/.npmrc
+.web/.gitignore
+.web/reflex.*
+
+# Python
+.states/
+.git/
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Secrets
+.env
+.env.local
+
+# Logs
+*.log

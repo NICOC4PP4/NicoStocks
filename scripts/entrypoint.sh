@@ -16,7 +16,7 @@ else
 fi
 
 echo "Replacing placeholder in static files..."
-find .web/_static -type f -name "*.js" -exec sed -i "s|http://API_URL_PLACEHOLDER|$REAL_API_URL|g" {} +
+find .web/build/client -type f -name "*.js" -exec sed -i "s|http://API_URL_PLACEHOLDER|$REAL_API_URL|g" {} +
 
 # 3. Iniciar Backend en segundo plano
 echo "Starting Reflex Backend..."

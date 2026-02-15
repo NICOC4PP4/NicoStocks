@@ -33,8 +33,10 @@ env/
 Desktop/
 
 # Reflex / React
-.web/
-!.web/_static/
+.web/*
+!.web/build/
+.web/build/*
+!.web/build/client/
 assets/
 public/
 .states/
