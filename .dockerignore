@@ -1,20 +1,49 @@
 # Python
-.states/
-.git/
-.venv/
-venv/
 __pycache__/
 *.pyc
+*.pyo
+.states/
 
-# Secrets
+# Git
+.git/
+
+# Virtual envs
+.venv/
+venv/
+
+# Secrets (Railway uses env vars, not .env file)
 .env
 .env.local
 
 # Logs
 *.log
 
-# Exclude ALL of .web EXCEPT the pre-built static files
-.web/*
-!.web/build/
-.web/build/*
-!.web/build/client/
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# .web: exclude heavy dev files, KEEP build/client (production assets)
+.web/node_modules/
+.web/app/
+.web/backend/
+.web/components/
+.web/styles/
+.web/utils/
+.web/public/
+.web/.npmrc
+.web/.gitignore
+.web/bun.lock
+.web/bunfig.toml
+.web/package.json
+.web/jsconfig.json
+.web/postcss.config.js
+.web/react-router.config.js
+.web/vite.config.js
+.web/vite-plugin-safari-cachebust.js
+.web/env.json
+.web/reflex.json
+.web/reflex.install_frontend_packages.cached
