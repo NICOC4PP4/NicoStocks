@@ -93,4 +93,5 @@ def add_transaction_modal() -> rx.Component:
             max_width="480px",
         ),
         open=State.show_modal,
+        on_open_change=State.toggle_modal,
     )

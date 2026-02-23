@@ -2,6 +2,7 @@ import reflex as rx
 from reflex_app.state import State
 from reflex_app.components.add_transaction_modal import add_transaction_modal
 import plotly.graph_objects as go
+from reflex_app.components.navbar import navbar
 
 
 def kpi_card(title, value, subtext, color):
@@ -23,6 +24,7 @@ def plot_component():
 
 def dashboard_page():
     return rx.vstack(
+        navbar(),
         rx.flex(
             rx.heading("SmartFolio Dashboard", size="8"),
             add_transaction_modal(),
@@ -51,4 +53,5 @@ def dashboard_page():
         on_mount=State.load_data,
         spacing="5",
         padding="5",
+        width="100%",
     )

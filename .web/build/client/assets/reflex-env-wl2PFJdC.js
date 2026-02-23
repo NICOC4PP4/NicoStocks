@@ -1,1 +1,0 @@
-var e={PING:`http://API_URL_PLACEHOLDER/ping`,EVENT:`ws://API_URL_PLACEHOLDER/_event`,UPLOAD:`http://API_URL_PLACEHOLDER/_upload`,AUTH_CODESPACE:`http://API_URL_PLACEHOLDER/auth-codespace`,HEALTH:`http://API_URL_PLACEHOLDER/_health`,ALL_ROUTES:`http://API_URL_PLACEHOLDER/_all_routes`,TRANSPORT:`websocket`,TEST_MODE:!1};export{e as t};

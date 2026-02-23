@@ -43,18 +43,23 @@ class State(rx.State):
 
     # ── Modal Controls ────────────────────────────────────────────────
 
+    def toggle_modal(self, open: bool):
+        """Sincroniza el estado del modal con el componente."""
+        self.show_modal = open
+        if open:
+            self.form_ticker = ""
+            self.form_date = datetime.now().strftime("%Y-%m-%d")
+            self.form_shares = ""
+            self.form_price = ""
+            self.form_error = ""
+
     def open_modal(self):
-        """Abre el modal y resetea el formulario."""
-        self.show_modal = True
-        self.form_ticker = ""
-        self.form_date = datetime.now().strftime("%Y-%m-%d")
-        self.form_shares = ""
-        self.form_price = ""
-        self.form_error = ""
+        """Abre el modal."""
+        self.toggle_modal(True)
 
     def close_modal(self):
-        self.show_modal = False
-        self.form_error = ""
+        """Cierra el modal."""
+        self.toggle_modal(False)
 
     # ── Core: Agregar Transacción ─────────────────────────────────────
 

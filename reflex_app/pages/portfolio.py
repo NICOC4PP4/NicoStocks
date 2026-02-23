@@ -1,6 +1,7 @@
 import reflex as rx
 from reflex_app.state import State
 from reflex_app.components.add_transaction_modal import add_transaction_modal
+from reflex_app.components.navbar import navbar
 
 
 def row_item(row: dict):
@@ -38,6 +39,7 @@ def row_item(row: dict):
 
 def portfolio_page():
     return rx.vstack(
+        navbar(),
         rx.flex(
             rx.heading("Active Holdings", size="6"),
             add_transaction_modal(),
@@ -88,4 +90,5 @@ def portfolio_page():
         on_mount=State.load_data,
         spacing="4",
         padding="5",
+        width="100%",
     )

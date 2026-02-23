@@ -40,18 +40,25 @@ class DataManager:
 
     def validate_ticker(self, ticker: str) -> Optional[Dict]:
         """
-        Verifica que un ticker exista en FMP.
+        Verifica que un ticker exista usando yfinance (gratis).
         Retorna dict con name, sector, description si existe; None si no.
         """
-        data = self._get_fmp(f"profile/{ticker}")
-        if not data:
+        try:
+            t = yf.Ticker(ticker)
+            info = t.info
+            
+            # yf.Ticker siempre retorna un objeto, verificamos si tiene nombre
+            if "longName" not in info and "shortName" not in info:
+                return None
+                
+            return {
+                "name": info.get("longName") or info.get("shortName") or ticker,
+                "sector": info.get("sector", "Unknown"),
+                "description": (info.get("longBusinessSummary", "") or "")[:500],
+            }
+        except Exception as e:
+            print(f"DEBUG: yfinance validation error for {ticker}: {e}")
             return None
-        profile = data[0] if isinstance(data, list) else data
-        return {
-            "name": profile.get("companyName", ticker),
-            "sector": profile.get("sector", "Unknown"),
-            "description": (profile.get("description", "") or "")[:500],
-        }
 
     # ── Earnings Calendar ─────────────────────────────────────────────
 
