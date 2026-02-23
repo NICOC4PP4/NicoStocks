@@ -37,6 +37,7 @@ Desktop/
 !.web/build/
 .web/build/*
 !.web/build/client/
+!.web/build/client/**
 assets/
 public/
 .states/
