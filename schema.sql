@@ -38,24 +38,24 @@ CREATE TABLE IF NOT EXISTS market_news (
 -- 4. Row Level Security (RLS)
 ALTER TABLE assets ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY IF NOT EXISTS "Enable read access for all users" ON assets
-    FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Enable read access for all users" ON assets;
+CREATE POLICY "Enable read access for all users" ON assets FOR SELECT USING (true);
 
-CREATE POLICY IF NOT EXISTS "Enable write for service role" ON assets
-    FOR ALL USING (auth.role() = 'service_role');
+DROP POLICY IF EXISTS "Enable write for service role" ON assets;
+CREATE POLICY "Enable write for service role" ON assets FOR ALL USING (auth.role() = 'service_role');
 
 ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY IF NOT EXISTS "Enable read access for all users" ON transactions
-    FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Enable read access for all users" ON transactions;
+CREATE POLICY "Enable read access for all users" ON transactions FOR SELECT USING (true);
 
-CREATE POLICY IF NOT EXISTS "Enable insert for all users" ON transactions
-    FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Enable insert for all users" ON transactions;
+CREATE POLICY "Enable insert for all users" ON transactions FOR INSERT WITH CHECK (true);
 
 ALTER TABLE market_news ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY IF NOT EXISTS "Enable read access for all users" ON market_news
-    FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Enable read access for all users" ON market_news;
+CREATE POLICY "Enable read access for all users" ON market_news FOR SELECT USING (true);
 
 -- 6. Tabla de Watchlist
 CREATE TABLE IF NOT EXISTS watchlist (
@@ -67,14 +67,14 @@ CREATE TABLE IF NOT EXISTS watchlist (
 
 ALTER TABLE watchlist ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY IF NOT EXISTS "Enable read access for all users" ON watchlist
-    FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Enable read access for all users" ON watchlist;
+CREATE POLICY "Enable read access for all users" ON watchlist FOR SELECT USING (true);
 
-CREATE POLICY IF NOT EXISTS "Enable insert for all users" ON watchlist
-    FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Enable insert for all users" ON watchlist;
+CREATE POLICY "Enable insert for all users" ON watchlist FOR INSERT WITH CHECK (true);
 
-CREATE POLICY IF NOT EXISTS "Enable delete for all users" ON watchlist
-    FOR DELETE USING (true);
+DROP POLICY IF EXISTS "Enable delete for all users" ON watchlist;
+CREATE POLICY "Enable delete for all users" ON watchlist FOR DELETE USING (true);
 
 -- Migration SQL (ejecutar manualmente si las tablas ya existen)
 -- ALTER TABLE assets ADD COLUMN IF NOT EXISTS description TEXT;
