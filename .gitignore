@@ -1,4 +1,6 @@
 .web
+# .web (Ignorado selectivamente más abajo)
+# .web
 .states
 assets/external/
 # Python

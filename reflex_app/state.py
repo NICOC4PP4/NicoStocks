@@ -5,6 +5,7 @@ from utils.data_engine import DataManager
 from utils.finance_core import calculate_twr
 import pandas as pd
 from datetime import datetime
+import yfinance as yf
 
 # ── Supabase Init ─────────────────────────────────────────────────────
 url: str = os.environ.get("SUPABASE_URL", "")
@@ -19,18 +20,65 @@ else:
 dm = DataManager()
 
 
+from pydantic import BaseModel
+
+class Holding(BaseModel):
+    """Typed data model for portfolio holdings."""
+    ticker: str = ""
+    shares: float = 0.0
+    avg_buy: float = 0.0
+    price: float = 0.0
+    value: float = 0.0
+    pnl_pct: float = 0.0
+    pe_ntm: float = 0.0
+    fcf_share: float = 0.0
+
+class RecentActivity(BaseModel):
+    """Typed data model for recent transactions."""
+    ticker: str = ""
+    action: str = ""
+    qty: str = ""
+    price: str = ""
+    date: str = ""
+
+class WatchlistItem(BaseModel):
+    """Typed data model for watchlist items."""
+    ticker: str = ""
+    price: float = 0.0
+    change_pct: float = 0.0
+    market_cap: str = ""
+    pe_ntm: float = 0.0
+
+
 class State(rx.State):
     """Estado global de la aplicación SmartFolio."""
 
     # ── Portfolio Data ────────────────────────────────────────────────
-    holdings: list[dict] = []
+    holdings: list[Holding] = []
     total_value: float = 0.0
     total_pnl: float = 0.0
     twr_metric: float = 0.0
     benchmark_data: list[dict] = []
+    
+    # ── Search & Filters ─────────────────────────────────────────────
+    search_ticker: str = ""
+
+    @rx.var
+    def filtered_holdings(self) -> list[Holding]:
+        """Retorna holdings filtrados por el ticker ingresado en el buscador."""
+        search = self.search_ticker.strip().upper()
+        if not search:
+            return self.holdings
+        return [h for h in self.holdings if search in h.ticker.upper()]
+
+    # ── Dashboard Data ────────────────────────────────────────────────
+    total_portfolio_value: float = 0.0
+    daily_pnl: float = 0.0
+    daily_pnl_percent: float = 0.0
+    recent_activity: list[RecentActivity] = []
 
     # ── Watchlist Data ────────────────────────────────────────────────
-    watchlist: list[dict] = []
+    watchlist: list[WatchlistItem] = []
 
     # ── Transaction Form ──────────────────────────────────────────────
     show_modal: bool = False
@@ -127,13 +175,94 @@ class State(rx.State):
         self.form_loading = False
         self.show_modal = False
         self.fetch_portfolio()
+        self.fetch_dashboard_data()
 
     # ── Core: Cargar Portfolio ────────────────────────────────────────
 
     def load_data(self):
         """Carga inicial de datos."""
         self.fetch_portfolio()
+        self.fetch_dashboard_data()
         self.fetch_watchlist()
+
+    def fetch_dashboard_data(self):
+        """Calcula KPIs del Dashboard y obtiene actividad reciente."""
+        if not supabase:
+            return
+
+        # ── Obtener últimas 5 transacciones ──
+        response = supabase.table("transactions").select("*").order("date", desc=True).limit(5).execute()
+        
+        self.recent_activity = []
+        for tx in response.data:
+            self.recent_activity.append(RecentActivity(
+                ticker=tx["ticker"],
+                action=tx["type"],
+                qty=f"{tx['shares']} Shares",
+                price=f"${tx['price']:.2f}",
+                date=self._format_date(tx["date"]),
+            ))
+
+        # ── Calcular Portfolio Value y Daily P&L ──
+        response = supabase.table("transactions").select("*").execute()
+        trans_df = pd.DataFrame(response.data)
+
+        if trans_df.empty:
+            self.total_portfolio_value = 0.0
+            self.daily_pnl = 0.0
+            self.daily_pnl_percent = 0.0
+            return
+
+        # Agrupar por Ticker para obtener posiciones actuales
+        grouped = trans_df.groupby("ticker").agg(
+            total_shares=("shares", "sum"),
+        ).reset_index()
+
+        current_total = 0.0
+        yesterday_total = 0.0
+
+        for _, row in grouped.iterrows():
+            ticker = row["ticker"]
+            shares = float(row["total_shares"])
+
+            if shares <= 0:
+                continue
+
+            # Obtener precio actual y anterior usando yfinance
+            try:
+                t = yf.Ticker(ticker)
+                current_price = t.fast_info.get("last_price", 0)
+                previous_close = t.fast_info.get("previous_close", 0)
+                
+                current_total += shares * current_price
+                yesterday_total += shares * previous_close
+            except Exception as e:
+                print(f"Error fetching prices for {ticker}: {e}")
+                continue
+
+        self.total_portfolio_value = round(current_total, 2)
+        self.daily_pnl = round(current_total - yesterday_total, 2)
+        self.daily_pnl_percent = (
+            round((self.daily_pnl / yesterday_total) * 100, 2)
+            if yesterday_total > 0
+            else 0.0
+        )
+
+    def _format_date(self, date_str: str) -> str:
+        """Formatea fecha para mostrar 'Today', 'Yesterday' o fecha."""
+        try:
+            date = datetime.strptime(date_str, "%Y-%m-%d").date()
+            today = datetime.now().date()
+            delta = (today - date).days
+            
+            if delta == 0:
+                return "Today"
+            elif delta == 1:
+                return "Yesterday"
+            else:
+                return date.strftime("%b %d")
+        except:
+            return date_str
 
     def fetch_portfolio(self):
         """Obtiene transacciones y calcula holdings con PnL."""
@@ -175,16 +304,16 @@ class State(rx.State):
             current_total += value
             total_cost_all += total_cost
 
-            current_holdings.append({
-                "ticker": ticker,
-                "shares": round(shares, 4),
-                "avg_buy": avg_buy,
-                "price": price,
-                "value": value,
-                "pnl_pct": pnl_pct,
-                "pe_ntm": dm.get_pe_ntm(ticker) or 0,
-                "fcf_share": dm.get_fcf_per_share(ticker) or 0,
-            })
+            current_holdings.append(Holding(
+                ticker=ticker,
+                shares=round(shares, 4),
+                avg_buy=avg_buy,
+                price=price,
+                value=value,
+                pnl_pct=pnl_pct,
+                pe_ntm=dm.get_pe_ntm(ticker) or 0,
+                fcf_share=dm.get_fcf_per_share(ticker) or 0,
+            ))
 
         self.holdings = current_holdings
         self.total_value = round(current_total, 2)
@@ -196,4 +325,53 @@ class State(rx.State):
         self.twr_metric = calculate_twr(trans_df, self.total_value)
 
     def fetch_watchlist(self):
-        pass
+        """Obtiene la lista de seguimiento y sus precios actuales."""
+        if not supabase:
+            return
+
+        response = supabase.table("watchlist").select("ticker").execute()
+        tickers = [item["ticker"] for item in response.data]
+
+        self.watchlist = []
+        for ticker in tickers:
+            try:
+                price = dm.get_current_price(ticker)
+                # Estimamos cambio diario y market cap (mock o simple info)
+                t = yf.Ticker(ticker)
+                change_pct = round(t.fast_info.get("day_change_percent", 0) * 100, 2)
+                mcap = t.fast_info.get("market_cap", 0)
+                mcap_str = f"${mcap/1e9:.1f}B" if mcap > 1e9 else f"${mcap/1e6:.1f}M"
+                
+                self.watchlist.append(WatchlistItem(
+                    ticker=ticker,
+                    price=price,
+                    change_pct=change_pct,
+                    market_cap=mcap_str,
+                    pe_ntm=dm.get_pe_ntm(ticker) or 0
+                ))
+            except Exception as e:
+                print(f"Error fetching watchlist for {ticker}: {e}")
+
+    def toggle_watchlist(self, ticker: str):
+        """Agrega o quita un ticker de la watchlist."""
+        if not supabase:
+            return
+
+        ticker = ticker.upper()
+        existing = [w.ticker for w in self.watchlist]
+        
+        if ticker in existing:
+            supabase.table("watchlist").delete().eq("ticker", ticker).execute()
+        else:
+            # Primero asegurar que existe en assets
+            profile = dm.validate_ticker(ticker)
+            if profile:
+                supabase.table("assets").insert({
+                    "ticker": ticker,
+                    "name": profile["name"],
+                    "sector": profile["sector"],
+                }).upsert().execute()
+                
+                supabase.table("watchlist").insert({"ticker": ticker}).execute()
+
+        self.fetch_watchlist()

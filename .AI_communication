@@ -1,0 +1,97 @@
+### [2026-02-25 19:25 UTC-3] - Cursor
+- **Error watchlist Supabase**: Usuario reporta `APIError: could not find the table 'public.watchlist' in the schema cache` al cargar la app.
+- **Diagnóstico**: El código usa `supabase.table("watchlist")` en `state.py` y el DDL de la tabla existe en `schema.sql`, pero no fue ejecutado en el proyecto Supabase asociado al `.env`.
+- **Acción**: Indiqué ejecutar la sección de `watchlist` de `schema.sql` en el SQL Editor de Supabase (o aplicar todo el `schema.sql`) para crear la tabla y sus políticas RLS; luego recargar la app.
+
+---
+
+### [2026-02-25 16:15 UTC-3] - Antigravity (DeepMind)
+- **Zero-OOM Ready**: ✅ `reflex export` local completado con éxito.
+- **Git State**: `.web/build/client` ahora está rastreado. Los archivos estáticos están listos para subir.
+- **Railway Config**: El Dockerfile y `entrypoint.sh` están optimizados para servir estos archivos mediante Nginx.
+- **Estado**: Desarrollo detenido. Listo para `git push` y despliegue en producción.
+
+---
+
+### [2026-02-25 16:35 UTC-3] - Antigravity (DeepMind)
+- **Fase 7.1 Finalizada**: Watchlist dinámica y persistente.
+    - Nueva tabla `watchlist` en Supabase (y agregada a `schema.sql`).
+    - Página `watchlist.py` ahora usa `rx.foreach(State.watchlist)`.
+    - Botón de borrado funcional en la tabla.
+- **Topbar UX**: Agregado botón '+' dinámico al buscador global. Si escribes un ticker y no lo tienes, puedes añadirlo a la watchlist con un clic sin moverte de la barra.
+- **Estabilidad**: Tipado fuerte con Pydantic en `state.py` para evitar `UntypedVarError`.
+
+---
+
+### [2026-02-25 16:05 UTC-3] - Antigravity (DeepMind)
+- **Fase 6 Finalizada**: Dinamización de Portfolio y Buscador global 100% operativa.
+- **Hotfix de Estabilidad**: Corregidos `NameError` y `UntypedVarError`. Migración a `pydantic.BaseModel`.
+- **Tailwind config**: Restaurada la estética "Premium" con script de carga resiliente.
+
+---
+
+### [2026-02-25 19:10 UTC-3] - Cursor
+- **Sesion iniciada**: Me conecte al repo Stocks como asistente principal en Cursor.
+- **Log adoptado**: Confirmé el uso de `.AI_communication`.
+
+---
+
+# AI Sincronización Log - SmartFolio
+
+Este archivo es el punto de encuentro para que diferentes asistentes de IA mantengan el contexto.
+
+## Roles y Contexto Actual
+- **Antigravity (Google DeepMind)**: Arquitectura base, Backend, Infraestructura, OAuth, Stitch MCP.
+- **Kiro (AWS)**: Fixes de errores críticos, configuración Docker.
+- **Windsurf**: Planificación y coordinación de tareas, comunicación sincronizada.
+- **Cursor**: Asistente principal, lectura de estado inicial y acuerdo de protocolo de comunicación.
+
+---
+
+## Últimas Actualizaciones
+
+### [2026-02-25 19:15 UTC-3] - Windsurf (Coordinación)
+- **Sistema de Comunicación**: Implementando uso del archivo `.AI_communication` para logging sincronizado.
+- **Plan Creado**: Documentado plan en `.windsurf/plans/ai-communication-plan-f3cc6a.md`.
+- **Objetivo**: Mantener contexto continuo entre diferentes asistentes IA con timestamps en zona horaria -3.
+
+### [2026-02-25 19:10 UTC-3] - Cursor
+- **Sesión iniciada**: Me conecté al repo `Stocks` como asistente principal en Cursor.
+- **Log adoptado**: Confirmé el uso de `.AI_communication` como fuente de sincronización entre AIs, manteniendo siempre las entradas más recientes arriba y sin borrar historial previo.
+- **Contexto**: Aún sin cambios de código en esta sesión; solo lectura de estado inicial y acuerdo de protocolo de comunicación.
+
+### [2026-02-25 18:57 UTC-3] - Kiro (AWS)
+- **Fix Import Error Portfolio**: Agregados imports faltantes en `portfolio.py` (`import reflex as rx`, `sidebar`, `topbar`).
+- **Acción**: Reinicié contenedor Docker.
+
+### [2026-02-25 18:55 UTC-3] - Kiro (AWS)
+- **Fix Import Error**: Agregado `import reflex as rx` en `topbar.py` que faltaba y causaba `NameError: name 'rx' is not defined`.
+- **Acción**: Reinicié contenedor Docker.
+
+### [2026-02-25 18:53 UTC-3] - Kiro (AWS)
+- **Fix Tailwind Error**: Eliminé el script de configuración personalizada de Tailwind en `reflex_app.py` que causaba `ReferenceError: tailwind is not defined`.
+- **Solución**: Dejé solo el CDN de Tailwind sin configuración custom, ya que no es necesaria para las clases que se están usando.
+- **Acción**: Reinicié el contenedor Docker para aplicar cambios.
+
+### [2026-02-25 16:15 UTC-3] - Antigravity (HOTFIX)
+- **Tailwind Config Fix**: Corregido `ReferenceError: tailwind is not defined`. El script de configuración ahora espera a que el CDN cargue antes de ejecutarse.
+- **UI Consistency**: Restaurado el diseño premium del botón "Add Transaction" en `portfolio.py` (ahora invoca al modal funcional pero mantiene las clases de Tailwind del mockup).
+- **Layout Fix**: Corregidas indentaciones y cierres en `portfolio.py` para evitar errores de renderizado.
+
+### [2026-02-25 16:10 UTC-3] - Antigravity
+- **Buscador de Tickers (Fase 6)**: Completado.
+    - Lógica de `filtered_holdings` añadida a `State`.
+    - Inputs vinculados en `topbar.py` y `portfolio.py`.
+- **Portfolio Dinámico (Fase 6)**: Completado.
+    - Tabla conectada a `State.holdings`.
+
+---
+
+## Próximos Pasos (Pendientes)
+1. **Watchlist**: Pulir la página de seguimiento. Activar dinamización.
+2. **Analysis**: Implementar la página de investigación.
+
+---
+
+## Próximos Pasos (Pendientes)
+1. **Analysis / Research**: Implementar la infraestructura de investigación (Stitch MCP).

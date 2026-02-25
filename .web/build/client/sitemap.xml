@@ -12,4 +12,7 @@
   <url>
     <loc>http://localhost:3000/watchlist</loc>
   </url>
+  <url>
+    <loc>http://localhost:3000/research</loc>
+  </url>
 </urlset>

@@ -57,6 +57,25 @@ ALTER TABLE market_news ENABLE ROW LEVEL SECURITY;
 CREATE POLICY IF NOT EXISTS "Enable read access for all users" ON market_news
     FOR SELECT USING (true);
 
--- 5. Migration SQL (ejecutar manualmente si las tablas ya existen)
+-- 6. Tabla de Watchlist
+CREATE TABLE IF NOT EXISTS watchlist (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    ticker TEXT REFERENCES assets(ticker),
+    added_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(ticker)
+);
+
+ALTER TABLE watchlist ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY IF NOT EXISTS "Enable read access for all users" ON watchlist
+    FOR SELECT USING (true);
+
+CREATE POLICY IF NOT EXISTS "Enable insert for all users" ON watchlist
+    FOR INSERT WITH CHECK (true);
+
+CREATE POLICY IF NOT EXISTS "Enable delete for all users" ON watchlist
+    FOR DELETE USING (true);
+
+-- Migration SQL (ejecutar manualmente si las tablas ya existen)
 -- ALTER TABLE assets ADD COLUMN IF NOT EXISTS description TEXT;
 -- ALTER TABLE assets ADD COLUMN IF NOT EXISTS avg_buy_price DECIMAL(10, 2);

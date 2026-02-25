@@ -6,7 +6,7 @@ services:
     container_name: smartfolio_app
     volumes:
       - .:/app # Hot-reloading: mapea directorio local al contenedor
-      # - /app/.web # COMENTADO: Permitir exportar _static al host
+      - /app/.web # AISLADO: Reflex genera su propio .web con Tailwind
       - /app/__pycache__
     ports:
       - "3000:3000" # Frontend
