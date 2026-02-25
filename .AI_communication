@@ -5,11 +5,10 @@
 
 ---
 
-### [2026-02-25 16:15 UTC-3] - Antigravity (DeepMind)
 - **Zero-OOM Ready**: ✅ `reflex export` local completado con éxito.
-- **Git State**: `.web/build/client` ahora está rastreado. Los archivos estáticos están listos para subir.
-- **Railway Config**: El Dockerfile y `entrypoint.sh` están optimizados para servir estos archivos mediante Nginx.
-- **Estado**: Desarrollo detenido. Listo para `git push` y despliegue en producción.
+- **Git State**: `.web/build/client` ahora está rastreado.
+- **UI Fix**: Corregida legibilidad de inputs en el modal de transacciones (contraste Dark Mode).
+- **Estado**: Desarrollo detenido. Listo para `git push` y despliegue.
 
 ---
 

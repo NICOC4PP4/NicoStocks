@@ -26,6 +26,9 @@ def add_transaction_modal() -> rx.Component:
                     on_change=State.set_form_ticker,
                     size="3",
                     width="100%",
+                    color_scheme="blue",
+                    variant="surface",
+                    class_name="bg-slate-800 text-white border-slate-700",
                 ),
                 # ── Date ──
                 rx.text("Purchase Date", font_weight="bold", size="2"),
@@ -35,6 +38,8 @@ def add_transaction_modal() -> rx.Component:
                     on_change=State.set_form_date,
                     size="3",
                     width="100%",
+                    variant="surface",
+                    class_name="bg-slate-800 text-white border-slate-700",
                 ),
                 # ── Shares ──
                 rx.text("Shares", font_weight="bold", size="2"),
@@ -45,6 +50,8 @@ def add_transaction_modal() -> rx.Component:
                     on_change=State.set_form_shares,
                     size="3",
                     width="100%",
+                    variant="surface",
+                    class_name="bg-slate-800 text-white border-slate-700",
                 ),
                 # ── Price ──
                 rx.text("Price per Share (USD)", font_weight="bold", size="2"),
@@ -55,6 +62,8 @@ def add_transaction_modal() -> rx.Component:
                     on_change=State.set_form_price,
                     size="3",
                     width="100%",
+                    variant="surface",
+                    class_name="bg-slate-800 text-white border-slate-700",
                 ),
                 # ── Error Message ──
                 rx.cond(
